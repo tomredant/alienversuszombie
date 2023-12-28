@@ -1,0 +1,8 @@
+*.raw
+*.wav
+*.raw.o
+*.sh
+audio/*
+audio/*/*
+pic/*
+pic/*/*
