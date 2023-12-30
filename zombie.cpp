@@ -27,10 +27,10 @@ void Zombie::tickReceived() {
             font.setPointSize(FONT_SIZE);
             font.setBold(true);
             painter.setFont(font);
-            painter.drawPixmap(QRectF(mapParent.width()/2-map.width()/2,30+(m_id == 3 ? -30 : 0), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
-            QPen penText(QColor("#00e0fc"));
+            painter.drawPixmap(QRectF(mapParent.width()/2-map.width()/2,410-map.height(), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
+            QPen penText(QColor("#870011"));
             painter.setPen(penText);
-            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)).toUpper());
+            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)));
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -46,10 +46,10 @@ void Zombie::tickReceived() {
             font.setPointSize(FONT_SIZE);
             font.setBold(true);
             painter.setFont(font);
-            painter.drawPixmap(QRectF(mapParent.width()/2-map.width()/2,420-map.height(), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
-            QPen penText(QColor("#00e0fc"));
+            painter.drawPixmap(QRectF(mapParent.width()/2-100,410-map.height(), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
+            QPen penText(QColor("#870011"));
             painter.setPen(penText);
-            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)).toUpper());
+            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)));
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -67,10 +67,10 @@ void Zombie::tickReceived() {
             font.setPointSize(FONT_SIZE);
             font.setBold(true);
             painter.setFont(font);
-            painter.drawPixmap(QRectF(mapParent.width()/2-map.width()/2,420-map.height(), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
-            QPen penText(QColor("#00e0fc"));
+            painter.drawPixmap(QRectF(mapParent.width()/2-100,410-map.height(), map.width(), map.height()), map, QRectF(0,0, map.width(), map.height()));
+            QPen penText(QColor("#870011"));
             painter.setPen(penText);
-            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)).toUpper());
+            painter.drawText(QPoint(mapParent.width()/2, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1(m_character)));
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -117,5 +117,9 @@ void Zombie::kill() {
 
 bool Zombie::isDead() {
     return m_dead;
+}
+
+bool Zombie::isAlive() {
+    return m_alive;
 }
 

@@ -2,7 +2,6 @@
 #include<QPixmap>
 #include<QDebug>
 #include<QCursor>
-#include "gameproperties.h"
 #include <QPainter>
 Alien::Alien(QWidget* parent): QLabel(parent)
 {
@@ -18,21 +17,72 @@ void Alien::tickReceived() {
             QPixmap mapParent(800, 500);
             mapParent.fill(Qt::transparent);
             QPainter painter(&mapParent);
-            painter.drawPixmap(QRectF(mapParent.width()-map.width(),450-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
+            painter.drawPixmap(QRectF(mapParent.width()-map.width(),500-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
+
+            QPen pen = QColor("black");
+            pen.setWidth(4);
+            painter.setPen(pen);
+            QRect rect(mapParent.width()-160, 0, 100, 10);
+            QRect rectRemaining(mapParent.width()-160, 0, 100*(((double) (m_numAllowedHits - m_numHits))/m_numAllowedHits), 10);
+            QBrush brush(QColor("red"));
+            painter.fillRect(rectRemaining,brush);
+            painter.drawRect(rect);
+
+
+            QPen pen2 = QColor("black");
+            pen2.setWidth(4);
+            painter.setPen(pen2);
+            QRect rect2(mapParent.width()-160, 20, 100, 10);
+            QRect rectRemaining2(mapParent.width()-160, 20, 100*(((double) (m_numBullets))/m_maxNumBullets), 10);
+            QBrush brush2(QColor("#9d00de"));
+            painter.fillRect(rectRemaining2,brush2);
+            painter.drawRect(rect2);
+
+
+
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
             setMinimumHeight(mapParent.height());
             setMaximumHeight(mapParent.height());
-            if(m_stage == 4)
+            if(m_stage == 1)
                 m_attack = false;
-            m_stage= (m_stage == 4) ? 1 : (m_stage+1);
+            m_stage= (m_stage == 1) ? 1 : (m_stage-1);
         } else if(m_hit) {
             QPixmap map(":/pic/hurt" + QString::number(m_stage) + ".png");
             QPixmap mapParent(800, 500);
             mapParent.fill(Qt::transparent);
             QPainter painter(&mapParent);
-            painter.drawPixmap(QRectF(mapParent.width()-map.width(),450-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
+            painter.drawPixmap(QRectF(mapParent.width()-map.width(),500-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
+
+            QPen pen = QColor("black");
+            pen.setWidth(4);
+            painter.setPen(pen);
+            QRect rect(mapParent.width()-160, 0, 100, 10);
+            QRect rectRemaining(mapParent.width()-160, 0, 100*(((double) (m_numAllowedHits - m_numHits))/m_numAllowedHits), 10);
+            QBrush brush(QColor("red"));
+            painter.fillRect(rectRemaining,brush);
+            painter.drawRect(rect);
+
+
+
+
+
+            QPen pen2 = QColor("black");
+            pen2.setWidth(4);
+            painter.setPen(pen2);
+            QRect rect2(mapParent.width()-160, 20, 100, 10);
+            QRect rectRemaining2(mapParent.width()-160, 20, 100*(((double) (m_numBullets))/m_maxNumBullets), 10);
+            QBrush brush2(QColor("#9d00de"));
+            painter.fillRect(rectRemaining2,brush2);
+            painter.drawRect(rect2);
+
+
+
+
+
+
+
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -46,14 +96,28 @@ void Alien::tickReceived() {
             QPixmap mapParent(800, 500);
             mapParent.fill(Qt::transparent);
             QPainter painter(&mapParent);
-            //QFont font("Arial");
-            //font.setPointSize(FONT_SIZE);
-            //font.setBold(true);
-            //painter.setFont(font);
-            painter.drawPixmap(QRectF(mapParent.width()-map.width(),450-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
-            //QPen penText(QColor("#00e0fc"));
-            //painter.setPen(penText);
-            //painter.drawText(QPoint(mapParent.width()/3, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1('')).toUpper());
+            painter.drawPixmap(QRectF(mapParent.width()-map.width(),500-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
+
+            QPen pen = QColor("black");
+            pen.setWidth(4);
+            painter.setPen(pen);
+            QRect rect(mapParent.width()-160, 0, 100, 10);
+            QRect rectRemaining(mapParent.width()-160, 0, 100*(((double) (m_numAllowedHits - m_numHits))/m_numAllowedHits), 10);
+            QBrush brush(QColor("red"));
+            painter.fillRect(rectRemaining,brush);
+            painter.drawRect(rect);
+
+
+            QPen pen2 = QColor("black");
+            pen2.setWidth(4);
+            painter.setPen(pen2);
+            QRect rect2(mapParent.width()-160, 20, 100, 10);
+            QRect rectRemaining2(mapParent.width()-160, 20, 100*(((double) (m_numBullets))/m_maxNumBullets), 10);
+            QBrush brush2(QColor("#9d00de"));
+            painter.fillRect(rectRemaining2,brush2);
+            painter.drawRect(rect2);
+
+
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -66,14 +130,7 @@ void Alien::tickReceived() {
             QPixmap mapParent(800, 500);
             mapParent.fill(Qt::transparent);
             QPainter painter(&mapParent);
-            //QFont font("Arial");
-            //font.setPointSize(FONT_SIZE);
-            //font.setBold(true);
-            //painter.setFont(font);
-            painter.drawPixmap(QRectF(mapParent.width()-map.width(),450-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
-            //QPen penText(QColor("#00e0fc"));
-            //painter.setPen(penText);
-            //painter.drawText(QPoint(mapParent.width()/3, mapParent.height() - 0.5*FONT_SIZE), QString(QChar::fromLatin1('')).toUpper());
+            painter.drawPixmap(QRectF(mapParent.width()-map.width(),500-map.height(), map.width(), map.height()), map.transformed(QTransform().scale(-1, 1)), QRectF(0,0, map.width(), map.height()));
             setPixmap(mapParent);
             setMinimumWidth(mapParent.width());
             setMaximumWidth(mapParent.width());
@@ -89,7 +146,7 @@ void Alien::tickReceived() {
         }
     }
     m_currentTick++;
-    setGeometry(m_xPos, ZOMBIE_YPOS-40, width(), height());
+    setGeometry(m_xPos, ZOMBIE_YPOS-90, width(), height());
     show();
 }
 
@@ -108,19 +165,41 @@ bool Alien::isDead() {
 }
 
 void Alien::hit() {
-    if(!m_dying || m_dead) {
+    if(!m_dying && !m_dead) {
         m_hit = true;
+        m_numHits++;
         m_stage = 1;
     }
+}
+
+void Alien::setNumAllowedHits(int numAllowedHits) {
+    m_numAllowedHits = numAllowedHits;
 }
 
 
 
 void Alien::attack() {
-    if(!m_dying || m_dead) {
+    if(!m_dying && !m_dead) {
         m_attack = true;
-        m_stage = 1;
+        m_stage = 4;
+        m_numBullets = (m_numBullets > 1) ? (m_numBullets-1) : 0;
     }
+}
+
+void Alien::increaseAmountOfBullets() {
+    m_numBullets = (m_numBullets == m_maxNumBullets) ? m_maxNumBullets : (m_numBullets+1);
+}
+
+int Alien::getAmountOfBullets() {
+    return m_numBullets;
+}
+
+void Alien::setMaximumBullets(int num) {
+    m_maxNumBullets = num;
+}
+
+void Alien::resetAmountOfBullets() {
+    m_numBullets = m_maxNumBullets;
 }
 
 

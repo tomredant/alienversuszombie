@@ -39,7 +39,9 @@ SOURCES += \
     soundplayer.cpp \
     zombie.cpp \
     pacemaker.cpp \
-    alien.cpp
+    alien.cpp \
+    settings.cpp \
+    gameproperties.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -48,10 +50,12 @@ HEADERS += \
     gameproperties.h \
     zombie.h \
     pacemaker.h \
-    alien.h
+    alien.h \
+    settings.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    settings.ui
 
 RESOURCES += \
     pic.qrc

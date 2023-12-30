@@ -13,6 +13,8 @@ public:
     void interruptEventSound();
     void setEnableMusic(bool enableMusic);
     bool musicEnabled();
+    bool isBusy();
+    void setBusy();
 public slots:
     bool playMusic();
     bool playEventSound();
@@ -28,7 +30,7 @@ private:
     PaError m_paError;
     PaStream* m_eventStream;
     const int SAMPLE_RATE = 44100*2;
-
+    bool m_busy = false;
 
 };
 

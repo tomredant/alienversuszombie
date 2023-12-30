@@ -29,7 +29,7 @@ private:
     qint64 m_startTime;
     Alien* m_alien;
     int m_numAlienHits = 0;
-
+    qint64 m_lastZombieCreationTime = 0;
 };
 
 #endif // GAMESCENE_H

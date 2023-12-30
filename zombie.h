@@ -13,6 +13,7 @@ public:
     bool isDead();
     int getPosition();
     void attack();
+    bool isAlive();
 public slots:
     void tickReceived();
 private:

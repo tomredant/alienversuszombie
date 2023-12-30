@@ -6,6 +6,7 @@
 #include <QKeyEvent>
 #include <QDebug>
 #include <QDateTime>
+#include <settings.h>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,27 +18,28 @@ MainWindow::MainWindow(QWidget *parent) :
         delete tb;
     }
 
-    m_musicThread = new QThread();
-    m_musicThread->setObjectName("Audio player thread");
-    m_musicThread->start();
-    m_player = new SoundPlayer();
-    m_player->moveToThread(m_musicThread);
-    QMetaObject::invokeMethod(m_player, "playMusic");
 
 
+    const int NUM_SOUND_PLAYERS = 10;
+    for(int i=0;i<NUM_SOUND_PLAYERS;i++) {
+        QThread* thread = new QThread();
+        SoundPlayer* player = new SoundPlayer();
+        m_soundPlayers.insert(thread, player);
+        thread->setObjectName("Audio player thread " + QString::number(i));
+        thread->start();
+        player->moveToThread(thread);
+    }
+    m_soundPlayers.first()->setBusy();
+    QMetaObject::invokeMethod(m_soundPlayers.first(), "playMusic"); // the first player plays the music.
 
-    m_eventMusicThread = new QThread();
-    m_eventMusicThread->setObjectName("Audio player thread 2");
-    m_eventMusicThread->start();
-    m_eventPlayer = new SoundPlayer();
-    m_eventPlayer->moveToThread(m_eventMusicThread);
+    connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(playWinSound()));
+    connect(ui->gameScene, SIGNAL(alienHit()), this, SLOT(playFailSound()));
+    connect(ui->gameScene, SIGNAL(alienAttack()), this, SLOT(playEventSound()));
 
     connect(this, SIGNAL(tick()), ui->gameScene, SLOT(tickReceived()));
     connect(this, SIGNAL(notifyChar(char)), ui->gameScene, SLOT(charNotified(char)));
     connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(updateScore()));
-    connect(ui->gameScene, SIGNAL(updateScore()), m_eventPlayer, SLOT(playWinSound()));
-    connect(ui->gameScene, SIGNAL(alienHit()), m_eventPlayer, SLOT(playFailSound()));
-    connect(ui->gameScene, SIGNAL(alienAttack()), m_eventPlayer, SLOT(playEventSound()));
+
     connect(ui->gameScene, SIGNAL(alienDead()), this, SLOT(alienDeadReceived()));
     setStyleSheet("QGraphicsView { background: rgb(120, 92, 98);border:0px }");
     setStyleSheet("QMainWindow { background: rgb(120, 92, 98);}");
@@ -48,6 +50,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->muteButton,SIGNAL(clicked()), this, SLOT(toggleMusic()));
     connect(ui->aboutButton,SIGNAL(clicked()), this, SLOT(clickAbout()));
+    connect(ui->settingsButton,SIGNAL(clicked()), this, SLOT(clickSettings()));
 
 
     m_score=0;
@@ -70,9 +73,9 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(this, SIGNAL(tick()), gameScene, SLOT(tickReceived()));
         connect(this, SIGNAL(notifyChar(char)), gameScene, SLOT(charNotified(char)));
         connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(updateScore()));
-        connect(ui->gameScene, SIGNAL(updateScore()), m_eventPlayer, SLOT(playWinSound()));
-        connect(ui->gameScene, SIGNAL(alienHit()), m_eventPlayer, SLOT(playFailSound()));
-        connect(ui->gameScene, SIGNAL(alienAttack()), m_eventPlayer, SLOT(playEventSound()));
+        connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(playWinSound()));
+        connect(ui->gameScene, SIGNAL(alienHit()), this, SLOT(playFailSound()));
+        connect(ui->gameScene, SIGNAL(alienAttack()), this, SLOT(playEventSound()));
         connect(ui->gameScene, SIGNAL(alienDead()), this, SLOT(alienDeadReceived()));
         m_startTime = QDateTime::currentMSecsSinceEpoch();
         m_gameRunning = true;
@@ -97,6 +100,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 void MainWindow::updateScore(){
     (m_score)++;
     ui->score->setText("<font color=\"#870011\">" + QString::number(m_score) + "</font>");
@@ -104,17 +108,25 @@ void MainWindow::updateScore(){
 
 
 void MainWindow::toggleMusic() {
-    m_player->setEnableMusic(!m_player->musicEnabled());
-    if(m_player->musicEnabled())
+    m_soundPlayers.first()->setEnableMusic(!m_soundPlayers.first()->musicEnabled());
+    if(m_soundPlayers.first()->musicEnabled())
         ui->muteButton->setIcon(QIcon(":/pic/icon_sound.png"));
     else
         ui->muteButton->setIcon(QIcon(":/pic/icon_mute.png"));
 
 }
 
+void MainWindow::clickSettings() {
+    if(m_settings == NULL) {
+        m_settings = new Settings();
+    }
+    m_settings->show();
+    m_settings->raise();
+}
+
 void MainWindow::clickAbout() {
     std::vector<std::string> libs;
-    libs.push_back("AlienVersuszombie#" + QObject::tr("Game developed by Tom Redant, \nSource Code:\nhttps://TODO...").toStdString() + "#gpl-3.0");
+    libs.push_back("AlienVersuszombie#" + QObject::tr("Game developed by Tom Redant, \nSource Code:\nhttps://github.com/tomredant/alienversuszombie").toStdString() + "#gpl-3.0");
     libs.push_back(R"MYSTRING(PortAudio V19.6.0-devel##/*
                   * PortAudio Portable Real-Time Audio Library
                   * Latest Version at: http://www.portaudio.com
@@ -200,4 +212,38 @@ void MainWindow::keyPressEvent(QKeyEvent *ev)
 void MainWindow::keyReleaseEvent(QKeyEvent *ev)
 {
     Q_UNUSED(ev);
+}
+
+
+void MainWindow::playEventSound() {
+    QList<SoundPlayer*> players = m_soundPlayers.values();
+    for(int i=0;i<players.size();i++) {
+        if(!players[i]->isBusy()) {
+            players[i]->setBusy();
+            QMetaObject::invokeMethod(players[i], "playEventSound");
+            break;
+        }
+    }
+}
+
+void MainWindow::playFailSound() {
+    QList<SoundPlayer*> players = m_soundPlayers.values();
+    for(int i=0;i<players.size();i++) {
+        if(!players[i]->isBusy()) {
+            players[i]->setBusy();
+            QMetaObject::invokeMethod(players[i], "playFailSound");
+            break;
+        }
+    }
+}
+
+void MainWindow::playWinSound() {
+    QList<SoundPlayer*> players = m_soundPlayers.values();
+    for(int i=0;i<players.size();i++) {
+        if(!players[i]->isBusy()) {
+            players[i]->setBusy();
+            QMetaObject::invokeMethod(players[i], "playWinSound");
+            break;
+        }
+    }
 }

@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include<gamescene.h>
+#include <QMap>
+class Settings;
 class SoundPlayer;
 class QThread;
 class QKeyEvent;
@@ -20,6 +22,9 @@ public:
 public slots:
     void clickAbout();
     void tickReceived();
+    void playWinSound();
+    void playFailSound();
+    void playEventSound();
 signals:
     void tick();
     void notifyChar(char character);
@@ -29,15 +34,15 @@ private slots:
     void updateTime();
     void updateScore();
     void alienDeadReceived();
+    void clickSettings();
+
 private:
     Ui::MainWindow *ui;
     int m_score;
-    SoundPlayer* m_player;
-    QThread* m_musicThread;
-    SoundPlayer* m_eventPlayer;
-    QThread* m_eventMusicThread;
+    QMap<QThread*, SoundPlayer*> m_soundPlayers;
     qint64 m_startTime;
     bool m_gameRunning = true;
+    Settings* m_settings = NULL;
 
 protected:
     void keyPressEvent(QKeyEvent *event);

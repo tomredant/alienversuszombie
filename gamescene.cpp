@@ -24,13 +24,17 @@ GameScene::~GameScene() {
 
 
 void GameScene::charNotified(char character) {
-    m_alien->attack();
-    emit alienAttack();
-    for(int i=0;i<m_zombies.size();i++) {
-        if(character == m_zombies[i]->getCharacter()) {
-            m_zombies[i]->kill();
-            emit updateScore();
-            return; // only kill a single zombie
+    if(m_alien->getAmountOfBullets() > 0) {
+        m_alien->attack();
+        emit alienAttack();
+        for(int i=0;i<m_zombies.size();i++) {
+            if((character == m_zombies[i]->getCharacter()) && m_zombies[i]->isAlive()) {
+                m_zombies[i]->kill();
+                for(int i=0;i<BULLET_REGAIN_AFTER_HIT;i++)
+                    m_alien->increaseAmountOfBullets();
+                emit updateScore();
+                return; // only kill a single zombie
+            }
         }
     }
 }
@@ -42,9 +46,13 @@ void GameScene::alienDeadReceived() {
 void GameScene::tickReceived() {
 
     if((rand() % ZOMBIE_SELDOMNESS) == 0) {
-        m_zombies.append(new Zombie(this, (rand() % 3) + 1));
-        m_zombies.last()->show();
-        connect(this, SIGNAL(tick()), m_zombies.last(), SLOT(tickReceived()));
+        qint64 currentTime = QDateTime::currentMSecsSinceEpoch();
+        if((currentTime - m_lastZombieCreationTime) > MINIMUM_ZOMBIE_INTERVAL_MS) {
+            m_lastZombieCreationTime=currentTime;
+            m_zombies.append(new Zombie(this, (rand() % 3) + 1));
+            m_zombies.last()->show();
+            connect(this, SIGNAL(tick()), m_zombies.last(), SLOT(tickReceived()));
+        }
     }
 
 
@@ -68,6 +76,7 @@ void GameScene::tickReceived() {
             else {
                 m_alien->hit();
             }
+            m_alien->resetAmountOfBullets();
             emit alienHit();
         }
     }

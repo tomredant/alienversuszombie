@@ -36,6 +36,14 @@ SoundPlayer::~SoundPlayer() {
     }
 }
 
+void SoundPlayer::setBusy() {
+    m_busy = true;
+}
+
+bool SoundPlayer::isBusy() {
+    return m_busy;
+}
+
 void SoundPlayer::setEnableMusic(bool enableMusic) {
     m_enableMusic = enableMusic;
 }
@@ -58,11 +66,13 @@ bool SoundPlayer::playMusic() {
     paError = Pa_OpenStream(&stream, nullptr, &paStreamParameters, SAMPLE_RATE, paFramesPerBufferUnspecified, paClipOff, nullptr, nullptr);
     if (paError != paNoError || ! stream) {
         Pa_Terminate();
+        m_busy = false;
         return false;
     }
     paError = Pa_StartStream(stream);
     if (paError != paNoError) {
         Pa_Terminate();
+        m_busy = false;
         return false;
     }
     const size_t BUFFER_LEN = SAMPLE_RATE/10;
@@ -84,9 +94,11 @@ bool SoundPlayer::playMusic() {
     paError = Pa_CloseStream(stream);
     if (paError != paNoError) {
         Pa_Terminate();
+        m_busy = false;
         return false;
     }
     Pa_Terminate();
+    m_busy = false;
     return true;
 }
 
@@ -111,6 +123,7 @@ bool SoundPlayer::playEventSound() {
         memset(data, 0, sizeof(data));
         index = index + sizeof(data);
     }
+    m_busy = false;
     return true;
 }
 
@@ -132,6 +145,7 @@ bool SoundPlayer::playWinSound() {
         memset(data, 0, sizeof(data));
         index = index + sizeof(data);
     }
+    m_busy = false;
     return true;
 }
 
@@ -153,5 +167,6 @@ bool SoundPlayer::playFailSound() {
         memset(data, 0, sizeof(data));
         index = index + sizeof(data);
     }
+    m_busy = false;
     return true;
 }
