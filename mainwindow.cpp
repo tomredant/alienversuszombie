@@ -57,35 +57,34 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->score->setText("<font color=\"#870011\">" + QString::number(m_score) + "</font>");
     ui->time->setText("<font color=\"#870011\">" + QString::number(0) + "</font>");
 
-    connect(ui->restartButton,&QPushButton::clicked,[=]()
-    {
-        m_score=0;
-        ui->score->setText("<font color=\"#870011\">" + QString::number(m_score) + "</font>");
-        GameScene* gameScene = new GameScene();
-        gameScene->setMaximumWidth(1700);
-        gameScene->setMaximumHeight(956);
-        gameScene->setMinimumWidth(1700);
-        gameScene->setMinimumHeight(956);
-        GameScene* oldScene = ui->gameScene;
-        ui->gridLayout->replaceWidget(ui->gameScene, gameScene);
-        delete oldScene;
-        ui->gameScene = gameScene;
-        connect(this, SIGNAL(tick()), gameScene, SLOT(tickReceived()));
-        connect(this, SIGNAL(notifyChar(char)), gameScene, SLOT(charNotified(char)));
-        connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(updateScore()));
-        connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(playWinSound()));
-        connect(ui->gameScene, SIGNAL(alienHit()), this, SLOT(playFailSound()));
-        connect(ui->gameScene, SIGNAL(alienAttack()), this, SLOT(playEventSound()));
-        connect(ui->gameScene, SIGNAL(alienDead()), this, SLOT(alienDeadReceived()));
-        m_startTime = QDateTime::currentMSecsSinceEpoch();
-        m_gameRunning = true;
-    });
-
-
+    connect(ui->restartButton,SIGNAL(clicked()), this, SLOT(restart()));
     m_startTime = QDateTime::currentMSecsSinceEpoch();
 }
 
 
+
+void MainWindow::restart() {
+    m_score=0;
+    ui->score->setText("<font color=\"#870011\">" + QString::number(m_score) + "</font>");
+    GameScene* gameScene = new GameScene();
+    gameScene->setMaximumWidth(1700);
+    gameScene->setMaximumHeight(956);
+    gameScene->setMinimumWidth(1700);
+    gameScene->setMinimumHeight(956);
+    GameScene* oldScene = ui->gameScene;
+    ui->gridLayout->replaceWidget(ui->gameScene, gameScene);
+    delete oldScene;
+    ui->gameScene = gameScene;
+    connect(this, SIGNAL(tick()), gameScene, SLOT(tickReceived()));
+    connect(this, SIGNAL(notifyChar(char)), gameScene, SLOT(charNotified(char)));
+    connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(updateScore()));
+    connect(ui->gameScene, SIGNAL(updateScore()), this, SLOT(playWinSound()));
+    connect(ui->gameScene, SIGNAL(alienHit()), this, SLOT(playFailSound()));
+    connect(ui->gameScene, SIGNAL(alienAttack()), this, SLOT(playEventSound()));
+    connect(ui->gameScene, SIGNAL(alienDead()), this, SLOT(alienDeadReceived()));
+    m_startTime = QDateTime::currentMSecsSinceEpoch();
+    m_gameRunning = true;
+ }
 
 void MainWindow::alienDeadReceived() {
     emit gameEnded();
@@ -119,6 +118,7 @@ void MainWindow::toggleMusic() {
 void MainWindow::clickSettings() {
     if(m_settings == NULL) {
         m_settings = new Settings();
+        connect(m_settings,SIGNAL(restart()), this, SLOT(restart()));
     }
     m_settings->show();
     m_settings->raise();
@@ -205,8 +205,10 @@ void MainWindow::tickReceived() {
 
 void MainWindow::keyPressEvent(QKeyEvent *ev)
 {
-    char character = ev->text().toLatin1().constData()[0];
-    emit notifyChar(character);
+    if(ev->text().size() > 0) {
+        char character = ev->text().toLatin1().constData()[0];
+        emit notifyChar(character);
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *ev)

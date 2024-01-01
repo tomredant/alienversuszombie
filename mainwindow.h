@@ -25,6 +25,7 @@ public slots:
     void playWinSound();
     void playFailSound();
     void playEventSound();
+    void restart();
 signals:
     void tick();
     void notifyChar(char character);
