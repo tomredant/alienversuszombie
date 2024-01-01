@@ -24,7 +24,7 @@ GameScene::~GameScene() {
 
 
 void GameScene::charNotified(char character) {
-    if(m_alien->getAmountOfBullets() > 0) {
+    if(m_alien->getAmountOfBullets() > 0 && !m_alien->isDead()) {
         m_alien->attack();
         emit alienAttack();
         for(int i=0;i<m_zombies.size();i++) {
