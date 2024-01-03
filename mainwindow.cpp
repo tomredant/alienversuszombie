@@ -176,8 +176,39 @@ void MainWindow::clickAbout() {
     libs.push_back("MinGW-W64-builds-4.3.5##MinGW-w64");
     libs.push_back("libstdc++-6##gpl-3.0_runtime_exception");
     libs.push_back(R"MYSTRING(Artwork and Audio##
-Images obtained from:
-TODO
+Artwork obtained from:
+                   https://craftpix.net/freebies/2d-game-zombie-character-free-sprite-pack-1/
+                   https://craftpix.net/freebies/2d-game-alien-character-free-sprite/
+                   https://craftpix.net/freebies/free-halloween-2d-game-backgrounds/
+                   These items are available for use on a royalty free basis in unlimited projects. License details are shown on the link below:
+                   https://craftpix.net/file-licenses/
+
+
+
+Audio obtained from:
+                   https://freesound.org/people/AtoMediaDesign/sounds/648969/
+                   By AtoMediaDesign
+                   CC BY 4.0 DEED
+                   Attribution 4.0 International
+                   https://creativecommons.org/licenses/by/4.0/
+
+                   https://freesound.org/people/UNIVERSFIELD/sounds/706326/
+                   by UNIVERSFIELD
+                   CC BY 4.0 DEED
+                   Attribution 4.0 International
+                   https://creativecommons.org/licenses/by/4.0/
+
+                   https://freesound.org/people/Bird_man/sounds/317136/
+                   by Bird_man
+                   CC0 1.0 DEED
+                   CC0 1.0 Universal
+                   https://creativecommons.org/publicdomain/zero/1.0/
+
+                   https://freesound.org/people/CrocyTC/sounds/353062/
+                   by CrocyTC
+                   CC0 1.0 DEED
+                   CC0 1.0 Universal
+                   https://creativecommons.org/publicdomain/zero/1.0/
 )MYSTRING");
 
     populateLicenseDialog(libs);

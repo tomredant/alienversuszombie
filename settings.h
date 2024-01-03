@@ -17,6 +17,14 @@ public:
 
 private:
     Ui::Settings *ui;
+    void applyValuesToGUI();
+    void applyGUIToValues();
+
+private slots:
+    void clickSave();
+    void clickCancel();
+signals:
+    void restart();
 };
 
 #endif // SETTINGS_H

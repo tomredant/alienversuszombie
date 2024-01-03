@@ -23,7 +23,7 @@ public slots:
     void hit();
     void attack();
 private:
-    int m_numAllowedHits = 5;
+    int m_numAllowedHits = MAX_NUM_ALIEN_HITS;
     int m_stage=1;
     int m_xPos = 0;
     int m_currentTick = 0;
